@@ -28,8 +28,8 @@ export class CreateSessionComponent implements OnInit {
         this.presenter = new FormControl('', Validators.required);
         this.duration = new FormControl('', Validators.required);
         this.level = new FormControl('', Validators.required);
-        this.abstract = new FormControl('', Validators.required);
-        this.name = new FormControl('', [Validators.required, Validators.maxLength(400)]);
+        this.abstract = new FormControl('', [Validators.required,  Validators.maxLength(400), this.restrictedWords]);
+        this.name = new FormControl('', Validators.required);
 
         this.newSessionForm = new FormGroup({
             name: this.name,
@@ -44,14 +44,21 @@ export class CreateSessionComponent implements OnInit {
         let session: ISession = {
             id: undefined,
             name: formValues.name,
-            duration: +formValues.duration,
+            duration: +formValues.duration, 
             presenter: formValues.presenter,
             level: formValues.level,
             abstract: formValues.abstract,
             voters:[]
         }
 
-
-        console.log(formValues);
+        console.log(session);
     }
+
+    restrictedWords(control: FormControl) : {[key: string]: any}{
+        return control.value.includes('foo')
+        ? {'restrictedWords': 'foo'}
+        : null; 
+    }
+
+
 }
