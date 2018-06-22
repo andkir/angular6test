@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ISession } from '../shared';
+import { restrictedWords } from 'src/app/common/restrictedWords.validator';
 
 @Component({
+    selector: "create-session",
     templateUrl: 'create-session.component.html',
     styles: [`
     em { float: right; color: #E05C65; padding-left: 10px;}
@@ -15,6 +17,8 @@ import { ISession } from '../shared';
 })
 
 export class CreateSessionComponent implements OnInit {
+   @Output() saveNewSession: EventEmitter<any> = new EventEmitter();
+   @Output() cancelNewSession: EventEmitter<any> = new EventEmitter();
    newSessionForm: FormGroup;
    name: FormControl;
    presenter: FormControl;
@@ -28,7 +32,7 @@ export class CreateSessionComponent implements OnInit {
         this.presenter = new FormControl('', Validators.required);
         this.duration = new FormControl('', Validators.required);
         this.level = new FormControl('', Validators.required);
-        this.abstract = new FormControl('', [Validators.required,  Validators.maxLength(400), this.restrictedWords]);
+        this.abstract = new FormControl('', [Validators.required,  Validators.maxLength(400), restrictedWords(['foo', 'bar'])]);
         this.name = new FormControl('', Validators.required);
 
         this.newSessionForm = new FormGroup({
@@ -52,13 +56,7 @@ export class CreateSessionComponent implements OnInit {
         }
 
         console.log(session);
+
+        this.saveNewSession.emit(session);
     }
-
-    restrictedWords(control: FormControl) : {[key: string]: any}{
-        return control.value.includes('foo')
-        ? {'restrictedWords': 'foo'}
-        : null; 
-    }
-
-
 }
