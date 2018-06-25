@@ -2,4 +2,4 @@ export * from './event-list-resolver.service';
 export * from './events.service';
 export * from './event.model';
 export * from './collapsible-well.component';
-export * from './duratio.pipe';
+export * from './duration.pipe';
