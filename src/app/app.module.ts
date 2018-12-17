@@ -17,14 +17,15 @@ import {
 
 import {EventsAppComponent} from './events-app.component';
 import { NavbarComponent } from './nav/navbar.component';
-import { TOASTR_TOKEN, Toastr } from './common/toastr.service';
 import { appRoutes} from './routes'
 import { RouterModule } from '@angular/router';
 import { Error404Component } from './errors/404.component';
 import { AuthService } from './user/auth.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TOASTR_TOKEN, Toastr, JQ_TOKEN, SimpleModalComponent, ModalTriggerDirective} from './common/index';
 
-declare let toastr: Toastr;
+let toastr: Toastr = window['toastr'];
+let jQuery = window["$"];
 
 @NgModule({
   declarations: [
@@ -38,7 +39,9 @@ declare let toastr: Toastr;
     Error404Component,
     SessionListComponent,
     CollapsibleWellComponent,
-    DurationPipe
+    DurationPipe,
+    SimpleModalComponent,
+    ModalTriggerDirective
   ],
   imports: [
     BrowserModule,
@@ -49,6 +52,7 @@ declare let toastr: Toastr;
   providers: [
     EventsService,
     {provide: TOASTR_TOKEN,  useValue: toastr},
+    {provide: JQ_TOKEN, useValue: jQuery},
     EventRouteActivator,
     {
       provide: 'canDeactivateCreateEvent', useValue: checkDirtyState

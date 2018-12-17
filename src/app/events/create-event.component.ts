@@ -15,6 +15,7 @@ import { EventsService } from './shared/index';
 })
 
 export class CreateEventComponent implements OnInit {
+   // newEevent
     constructor(private router: Router, private eventService: EventsService) { 
         
     }
