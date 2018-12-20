@@ -1,10 +1,13 @@
 import {Injectable, EventEmitter} from '@angular/core'
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, of } from 'rxjs';
 import { IEvent } from './index';
 import { ISession } from './event.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class EventsService{
+  constructor(private http: HttpClient){}
     searchForSessions(searchTerm: string) {
         var term = searchTerm.toLocaleLowerCase();
         var results: ISession[] = [];
@@ -30,20 +33,30 @@ export class EventsService{
     }
 
     getEvents():Observable<IEvent[]> {
-      let subject = new Subject<IEvent[]>();
-      setTimeout(()=> {subject.next(EVENTS); subject.complete();}, 200);
+
+      return this.http.get<IEvent[]>('http://localhost:4201/api/events2')
+        .pipe(catchError(this.handleError<IEvent[]>('getEvents', []))) ;
       
-      return subject;
+      // let subject = new Subject<IEvent[]>();
+      // setTimeout(()=> {subject.next(EVENTS); subject.complete();}, 200);
+      
+      // return subject;
     }    
 
-    GetEventById(id: number): IEvent{
-      return EVENTS.find(e => e.id===id);
+    private handleError<T>(operation = 'operation', result?: T){
+      return (error: any): Observable<T> =>{
+        console.error(error);
+        return of(result as T);
+      }
+    }
+
+    GetEventById(id: number): Observable<IEvent>{
+      return this.http.get<IEvent>('http://localhost:4201/api/events2/'+id);
     }
 
     saveEvent(event){
-      event.id=999;
-      event.sessions = [];
-      EVENTS.push(event);
+      let options = { headers: new HttpHeaders({'Content-Type': 'application/json'})}
+      return this.http.post<IEvent>('http://localhost:4201/api/events2', event, options);
     }
 
     updateEvent(event){
